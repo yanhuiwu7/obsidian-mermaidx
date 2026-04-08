@@ -3,7 +3,7 @@
   "name": "MermaidX Diagrams",
   "version": "1.0.0",
   "minAppVersion": "0.15.0",
-  "description": "Unified diagram plugin with MermaidX syntax - Architecture diagrams, Knowledge graphs, and more",
+  "description": "Unified diagram plugin with MermaidX syntax - Architecture diagrams, Knowledge graphs, Swimlane diagrams,and more",
   "author": "yanhuiwu7",
   "authorUrl": "https://github.com/yanhuiwu7",
   "isDesktopOnly": false
