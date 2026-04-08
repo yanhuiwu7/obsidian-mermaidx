@@ -1,5 +1,4 @@
-import { ArchDiagramData, ArchLayer, ArchGroup, ArchNode, ArchLink } from './types';
-import { MarkdownRenderChild, MarkdownPostProcessorContext } from 'obsidian';
+import { ArchDiagramData, ArchLayer, ArchGroup, ArchNode, type ArchLink } from './types';
 import { getTheme, getAvailableThemes, getThemeLabel, type DiagramTheme } from '../common/themes';
 
 // Extended container interface for storing arch diagram data
@@ -15,7 +14,7 @@ export function renderArchDiagram(
   container: HTMLElement,
   data: ArchDiagramData,
   themeName?: string | null,
-  onThemeChange?: (themeName: string) => void
+  _onThemeChange?: (themeName: string) => void
 ): void {
   const archContainer = container as ArchContainer;
   
@@ -62,17 +61,17 @@ export function renderArchDiagram(
   });
 
   const btnToggleLinks = btnRow.createEl('button', {
-    text: 'Hide Links',
+    text: 'Hide links',
     cls: 'arch-btn active'
   });
 
   const btnToggleLabels = btnRow.createEl('button', {
-    text: 'Hide Labels',
+    text: 'Hide labels',
     cls: 'arch-btn active'
   });
 
   const btnReset = btnRow.createEl('button', {
-    text: 'Reset Highlight',
+    text: 'Reset highlight',
     cls: 'arch-btn'
   });
   
@@ -106,14 +105,14 @@ export function renderArchDiagram(
   btnToggleLinks.addEventListener('click', () => {
     const isActive = btnToggleLinks.classList.contains('active');
     btnToggleLinks.classList.toggle('active');
-    btnToggleLinks.textContent = isActive ? 'Show Links' : 'Hide Links';
+    btnToggleLinks.textContent = isActive ? 'Show links' : 'Hide links';
     child.toggleLinks(!isActive);
   });
   
   btnToggleLabels.addEventListener('click', () => {
     const isActive = btnToggleLabels.classList.contains('active');
     btnToggleLabels.classList.toggle('active');
-    btnToggleLabels.textContent = isActive ? 'Show Labels' : 'Hide Labels';
+    btnToggleLabels.textContent = isActive ? 'Show labels' : 'Hide labels';
     child.toggleLabels(!isActive);
   });
   

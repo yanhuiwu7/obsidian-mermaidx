@@ -386,7 +386,7 @@ export function parseSwimlaneConfig(frontmatter: string): SwimlaneConfig {
 
 export function parseSwimlane(content: string): { config: SwimlaneConfig; diagram: SwimlaneDiagram } {
   const lines = content.split('\n');
-  let frontmatterLines: string[] = [];
+  const frontmatterLines: string[] = [];
   let diagramSourceStart = 0;
   let inFrontmatter = false;
 

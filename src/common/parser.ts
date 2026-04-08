@@ -100,5 +100,5 @@ export function parseDiagramSource(source: string): ProcessResult & {
  * Generate unique ID
  */
 export function generateId(prefix: string = 'node'): string {
-  return `${prefix}-${Math.random().toString(36).substr(2, 9)}`;
+  return `${prefix}-${Math.random().toString(36).substring(2, 11)}`;
 }

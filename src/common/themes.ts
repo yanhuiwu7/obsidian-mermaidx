@@ -557,5 +557,6 @@ export function getAvailableThemes(): ThemeName[] {
 
 /** Get theme display label */
 export function getThemeLabel(name: ThemeName | string): string {
-  return themes[name as ThemeName]?.label ?? 'Default';
+  const theme = themes[name as ThemeName];
+  return theme?.label ?? 'Default';
 }

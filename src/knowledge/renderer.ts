@@ -1,7 +1,6 @@
 import { MarkdownRenderer, Component, App, MarkdownPostProcessorContext, TFile } from "obsidian";
 import * as yaml from 'js-yaml';
-import { GraphConfig, GraphNode, GraphLink, Triple, NodeShape } from "./types";
-import { parseKnowledgeGraph } from "./parser";
+import { GraphConfig, GraphNode, GraphLink, Triple } from "./types";
 import { getTheme, getAvailableThemes, getThemeLabel, type DiagramTheme } from '../common/themes';
 
 // Auto-assigned color palette
@@ -10,13 +9,12 @@ const AUTO_COLOR_PALETTE = [
   "#3b82f6", "#ec4899", "#14b8a6", "#f97316",
   "#8b5cf6", "#06b6d4", "#84cc16", "#a855f7",
 ];
-const DEFAULT_FALLBACK_COLOR = "#64748b";
 
 // ============================================
 // D3 type definitions (subset used by this plugin)
 // ============================================
 // D3 datum type: can be GraphNode, GraphLink, or other bound data
-type D3Datum = GraphNode | GraphLink | unknown;
+type D3Datum = GraphNode | GraphLink;
 
 type D3Selection = {
   attr: (name: string, value?: unknown) => D3Selection;
@@ -225,7 +223,7 @@ export class KnowledgeGraphRenderer {
     // Layout skeleton
     const graphWrap = container.createDiv({ cls: "kg-cb-graph-wrap" });
     // Force position:relative via inline style — CSS class may be overridden by Obsidian theme
-    graphWrap.style.position = "relative";
+    graphWrap.setCssProps({ position: "relative" });
 
     // Toolbar
     const toolbar = graphWrap.createDiv({ cls: "kg-cb-toolbar" });
@@ -252,8 +250,7 @@ export class KnowledgeGraphRenderer {
     canvasWrap.style.height = initH + "px";
     // Force position:relative via inline style to ensure canvasWrap is the containing block
     // for absolute-positioned Legend/Desc panels. CSS class may be overridden by Obsidian theme.
-    canvasWrap.style.position = "relative";
-    canvasWrap.style.overflow = "visible";
+    canvasWrap.setCssProps({ position: "relative", overflow: "visible" });
 
     // SVG
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -424,13 +421,13 @@ export class KnowledgeGraphRenderer {
         const fmContent = fmLines.join("\n");
         const fmObj = yaml.load(fmContent) as Record<string, unknown> | null;
         if (fmObj && typeof fmObj === "object") {
-          name = (typeof fmObj.name === "string" ? fmObj.name : 
-                  typeof fmObj.title === "string" ? fmObj.title : "Knowledge Graph") as string;
+          name = typeof fmObj.name === "string" ? fmObj.name : 
+                  typeof fmObj.title === "string" ? fmObj.title : "Knowledge Graph";
           description = typeof fmObj.description === "string" ? fmObj.description : "";
           if (typeof fmObj.height === "number") {
             height = fmObj.height;
           } else if (typeof fmObj.height === "string") {
-            const h = parseInt(fmObj.height as string);
+            const h = parseInt(fmObj.height);
             if (!isNaN(h) && h > 0) height = h;
           }
         }
@@ -607,13 +604,6 @@ export class KnowledgeGraphRenderer {
   // Legend panel (top-right, BELOW TOOLBAR, in graphWrap) - shows node styles or relation styles
   private renderLegendPanel(container: HTMLElement, config: GraphConfig, onFilter?: (label: string | null, color: string | null) => void) {
     const panel = container.createDiv({ cls: "kg-cb-legend-panel" });
-    // Force positioning via inline style WITH !important - highest priority
-    panel.style.setProperty("position", "absolute", "important");
-    panel.style.setProperty("top", "56px", "important");
-    panel.style.setProperty("right", "10px", "important");
-    panel.style.setProperty("left", "auto", "important"); // disable left
-    panel.style.setProperty("bottom", "auto", "important"); // disable bottom
-    panel.style.setProperty("z-index", "100", "important");
 
     const header = panel.createDiv({ cls: "kg-cb-legend-header" });
     header.createSpan({ cls: "kg-cb-legend-title", text: "Legend" });
@@ -694,16 +684,6 @@ export class KnowledgeGraphRenderer {
   // Description panel (bottom-left, ABOVE STATS, in graphWrap, auto height)
   private renderDescPanel(container: HTMLElement, config: GraphConfig) {
     const panel = container.createDiv({ cls: "kg-cb-desc" });
-    // Force positioning via inline style WITH !important - highest priority
-    panel.style.setProperty("position", "absolute", "important");
-    panel.style.setProperty("bottom", "64px", "important");
-    panel.style.setProperty("left", "14px", "important");
-    panel.style.setProperty("top", "auto", "important"); // disable top
-    panel.style.setProperty("right", "auto", "important"); // disable right
-    panel.style.setProperty("z-index", "100", "important");
-    panel.style.setProperty("height", "auto", "important");
-    panel.style.setProperty("max-height", "none", "important");
-    panel.style.setProperty("width", "260px", "important");
 
     // Header is FIRST in DOM (flex-direction:column, normal top-to-bottom)
     const header = panel.createDiv({ cls: "kg-cb-desc-header" });
@@ -860,9 +840,9 @@ class GraphRenderer {
 
   async render() {
     try {
-      // Load saved positions before rendering (must await since onLoad is async)
+      // Load saved positions before rendering
       if (this.positionCallbacks.onLoad && this.positionKey) {
-        const savedPositions = await this.positionCallbacks.onLoad(this.positionKey);
+        const savedPositions = this.positionCallbacks.onLoad(this.positionKey);
         if (savedPositions && typeof savedPositions === 'object' && !Array.isArray(savedPositions)) {
           this.data.nodes.forEach((node) => {
             const pos = savedPositions[node.name];
@@ -897,7 +877,7 @@ class GraphRenderer {
     this.data.nodes.forEach((node) => {
       node.pinned = false;
     });
-    this.render();
+    void this.render();
   }
 
   destroy() {
@@ -1035,7 +1015,7 @@ class GraphRenderer {
   }
 
   // Get half-height for rectangular/diamond/hexagon nodes
-  private getNodeHalfHeight(d: GraphNode): number {
+  private getNodeHalfHeight(_d: GraphNode): number {
     return 18;
   }
 
@@ -1209,22 +1189,22 @@ class GraphRenderer {
         if (node.x !== undefined && node.x < minX) {
           const distance = minX - node.x;
           node.vx = (node.vx || 0) + distance * alpha * 20;
-          if ((node.vx || 0) < 0) node.vx! *= -0.3;
+          if ((node.vx || 0) < 0) node.vx = -(node.vx || 0) * 0.3;
         }
         if (node.x !== undefined && node.x > maxX) {
           const distance = node.x - maxX;
           node.vx = (node.vx || 0) - distance * alpha * 20;
-          if ((node.vx || 0) > 0) node.vx! *= -0.3;
+          if ((node.vx || 0) > 0) node.vx = -(node.vx || 0) * 0.3;
         }
         if (node.y !== undefined && node.y < minY) {
           const distance = minY - node.y;
           node.vy = (node.vy || 0) + distance * alpha * 20;
-          if ((node.vy || 0) < 0) node.vy! *= -0.3;
+          if ((node.vy || 0) < 0) node.vy = -(node.vy || 0) * 0.3;
         }
         if (node.y !== undefined && node.y > maxY) {
           const distance = node.y - maxY;
           node.vy = (node.vy || 0) - distance * alpha * 20;
-          if ((node.vy || 0) > 0) node.vy! *= -0.3;
+          if ((node.vy || 0) > 0) node.vy = -(node.vy || 0) * 0.3;
         }
       }
     }
@@ -1431,10 +1411,10 @@ class GraphRenderer {
               if (d.y <= minY || d.y >= maxY) d.vy *= -0.15;
             }
             if (d.vx !== undefined && (d.x <= minX || d.x >= maxX)) {
-              d.vx! *= 0.5;
+              d.vx = (d.vx || 0) * 0.5;
             }
             if (d.vy !== undefined && (d.y <= minY || d.y >= maxY)) {
-              d.vy! *= 0.5;
+              d.vy = (d.vy || 0) * 0.5;
             }
           }
         }
@@ -1553,7 +1533,7 @@ class GraphRenderer {
     const positions: Record<string, { x: number; y: number }> = {};
     this.data.nodes.forEach((node) => {
       if (node.pinned && node.fx != null && node.fy != null) {
-        positions[node.name] = { x: node.fx!, y: node.fy! };
+        positions[node.name] = { x: node.fx, y: node.fy };
       }
     });
     this.savePositionsDebounced(positions);
