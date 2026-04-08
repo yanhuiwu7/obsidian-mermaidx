@@ -1,0 +1,1116 @@
+/* ============================================
+   MermaidX Diagrams — Obsidian Plugin Styles
+   Combined styles for archDiagram and knowledgeGraph
+   ============================================ */
+
+/* ============================================
+   Architecture Diagram Styles
+   ============================================ */
+
+.arch-wrap {
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 8px 0;
+  background: var(--background-primary);
+}
+
+.arch-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 44px 7px 12px;
+  border-bottom: 1px solid var(--background-modifier-border);
+  background: var(--background-secondary);
+  gap: 6px;
+}
+
+.arch-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-normal);
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.arch-btn-row {
+  display: flex;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.arch-btn {
+  background: var(--background-primary);
+  color: var(--text-muted);
+  border: 1px solid var(--background-modifier-border);
+  padding: 4px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 11.5px;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.arch-btn:hover {
+  background: var(--background-modifier-hover);
+  color: var(--text-accent);
+  border-color: var(--text-accent);
+}
+
+.arch-btn.active {
+  background: var(--text-accent);
+  color: var(--background-primary);
+  border-color: var(--text-accent);
+}
+
+/* Diagram content - main flex container for left/middle/right */
+.arch-diagram-content {
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+  min-height: 400px;
+  position: relative;
+  padding: 16px;
+  overflow: visible;
+}
+
+/* Middle container - holds middle layers, takes remaining space */
+.arch-middle {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+}
+
+/* Layers */
+.arch-layer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 200px;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  background: #fafafa;
+  position: relative;
+}
+
+/* Layer with title needs minimal top space */
+.arch-layer:has(.arch-layer-title) {
+  padding-top: 24px;
+}
+
+.arch-layer-left,
+.arch-layer-right {
+  min-width: 180px;
+  flex-shrink: 0;
+}
+
+/* Layer layout direction - Mermaid style (LR/TD/RL/BT) */
+.arch-layer-LR {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+}
+
+.arch-layer-TD {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.arch-layer-RL {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 16px;
+}
+
+.arch-layer-BT {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 16px;
+}
+
+.arch-layer-content {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-start;
+  width: 100%;
+  min-height: 60px;
+}
+
+/* Groups */
+.arch-groups {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+/* Layer groups inherit direction from layer */
+.arch-layer-LR > .arch-groups,
+.arch-layer-RL > .arch-groups {
+  flex-direction: row;
+}
+
+.arch-layer-TD > .arch-groups,
+.arch-layer-BT > .arch-groups {
+  flex-direction: column;
+}
+
+/* Layer title - lightweight, top-left */
+.arch-layer-title {
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  margin: 0;
+  padding: 2px 6px;
+  font-size: 11px;
+  font-weight: 400;
+  color: #666;
+}
+
+.arch-group {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 12px;
+  background: white;
+  position: relative;
+}
+
+/* Group with title needs minimal top space */
+.arch-group:has(.arch-group-title) {
+  padding-top: 20px;
+}
+
+/* Group layout direction - Mermaid style (LR/TD/RL/BT) */
+.arch-group-LR {
+  display: flex;
+  flex-direction: row;
+}
+
+.arch-group-TD {
+  display: flex;
+  flex-direction: column;
+}
+
+.arch-group-RL {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.arch-group-BT {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+/* Group title - lightweight, top-left */
+.arch-group-title {
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  margin: 0;
+  padding: 2px 4px;
+  font-size: 10px;
+  font-weight: 400;
+  color: #888;
+}
+
+/* Nodes */
+.arch-nodes {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+/* Layer nodes inherit direction from layer (when layer has direct nodes, no groups) */
+.arch-nodes-LR,
+.arch-nodes-RL {
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
+.arch-nodes-TD,
+.arch-nodes-BT {
+  flex-direction: column;
+  flex-wrap: nowrap;
+}
+
+/* Group nodes inherit direction from group */
+.arch-group-LR > .arch-nodes,
+.arch-group-RL > .arch-nodes {
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
+.arch-group-TD > .arch-nodes,
+.arch-group-BT > .arch-nodes {
+  flex-direction: column;
+  flex-wrap: nowrap;
+}
+
+.arch-node {
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 80px;
+  text-align: center;
+  position: relative;
+}
+
+.arch-node:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.arch-node-text {
+  font-weight: 500;
+}
+
+/* Node Types - Colors */
+.arch-node-user {
+  background: #e0f7fa;
+  border: 1px solid #4dd0e1;
+  color: #006064;
+}
+
+.arch-node-service {
+  background: #c8e6c9;
+  border: 1px solid #81c784;
+  color: #1b5e20;
+}
+
+.arch-node-infra {
+  background: #ffe0b2;
+  border: 1px solid #ffb74d;
+  color: #e65100;
+}
+
+.arch-node-external {
+  background: #bbdefb;
+  border: 1px solid #64b5f6;
+  color: #0d47a1;
+}
+
+.arch-node-monitor {
+  background: #f5f5f5;
+  border: 1px solid #9e9e9e;
+  color: #616161;
+}
+
+.arch-node-node {
+  background: #f5f5f5;
+  border: 1px solid #bdbdbd;
+  color: #424242;
+}
+
+.arch-node-desc {
+  font-size: 11px;
+  color: #666;
+  margin-top: 4px;
+}
+
+/* Node shapes */
+.arch-node-round {
+  border-radius: 20px;
+  padding: 8px 16px;
+}
+
+.arch-node-circle {
+  border-radius: 50%;
+  padding: 8px;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.arch-node-circle .arch-node-text {
+  font-size: 11px;
+  line-height: 1.2;
+  word-break: break-word;
+  text-align: center;
+  max-width: 100%;
+}
+
+/* Links SVG */
+.arch-links-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+  overflow: visible;
+}
+
+.arch-link-path {
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+
+.arch-link-path.arch-link-dashed {
+  stroke-dasharray: 5, 5;
+  stroke-dashoffset: 0;
+  animation: arch-dash-flow 0.6s linear infinite;
+}
+
+@keyframes arch-dash-flow {
+  from {
+    stroke-dashoffset: 10;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.arch-link-label {
+  font-size: 9.5px;
+  fill: #666;
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+}
+
+.arch-link-label-bg {
+  fill: white;
+  opacity: 0.75;
+}
+
+/* Node highlight states */
+.arch-node-highlighted {
+  box-shadow: 0 0 0 2px #5b5bd6;
+  transform: scale(1.05);
+}
+
+.arch-node-dimmed {
+  opacity: 0.3;
+}
+
+.arch-link-active {
+  opacity: 0.85 !important;
+  stroke-width: 2;
+}
+
+.arch-link-dimmed {
+  opacity: 0.06 !important;
+}
+
+/* Error */
+.arch-error {
+  color: #d32f2f;
+  padding: 8px;
+  background: #ffebee;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+/* ============================================
+   Knowledge Graph Styles
+   ============================================ */
+
+/* Outer container */
+/* NOTE: NO overflow:hidden here! CSS spec forces child overflow:visible → auto when
+   any ancestor has overflow:hidden, which breaks absolute positioning of Legend/Desc.
+   border-radius alone provides the visual rounded corners we need. */
+.kg-codeblock-wrap {
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 10px;
+  margin: 8px 0;
+  background: var(--background-primary);
+}
+
+/* Graph area */
+.kg-cb-graph-wrap {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* Canvas area (draggable height) */
+/* position:relative is also set via inline style in renderer.ts for extra safety */
+.kg-cb-canvas-wrap {
+  position: relative !important;
+  width: 100%;
+  height: 420px;
+  overflow: visible !important;
+  background: var(--background-primary);
+}
+
+.kg-cb-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* ── Nodes & Links ── */
+.kg-node {
+  cursor: grab;
+  transition: opacity 0.6s ease-out;
+}
+.kg-node:active { cursor: grabbing; }
+.kg-node circle {
+  stroke-width: 2.5px;
+  transition: stroke-width 0.6s ease-out;
+}
+.kg-node.kg-pinned circle {
+  stroke-dasharray: 5 3;
+  stroke-width: 3px;
+}
+.kg-node text {
+  pointer-events: none;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  paint-order: stroke fill;
+}
+
+.kg-link {
+  fill: none;
+  stroke-linecap: round;
+  transition: stroke-opacity 0.6s ease-out, stroke-width 0.6s ease-out, stroke 0.6s ease-out;
+}
+
+.kg-link-animated {
+  animation: kg-dash-flow 1s linear infinite;
+}
+
+@keyframes kg-dash-flow {
+  to {
+    stroke-dashoffset: -12;
+  }
+}
+
+.kg-link-label {
+  font-size: 11px;
+  fill: #475569;
+  pointer-events: none;
+  font-weight: 500;
+  transition: opacity 0.6s ease-out;
+}
+.kg-link-label-bg {
+  pointer-events: none;
+  transition: opacity 0.6s ease-out;
+}
+
+/* ── Tooltip ── */
+.kg-tooltip {
+  position: absolute;
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  color: var(--text-normal);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+  max-width: 260px;
+  line-height: 1.65;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  z-index: 1000;
+}
+.kg-tooltip.visible   { opacity: 1; }
+.kg-tooltip.measuring { opacity: 0; visibility: hidden; }
+.kg-tooltip strong    { color: var(--text-accent); }
+.kg-tt-type           { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+/* ── Toolbar ── */
+.kg-cb-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 44px 7px 12px;
+  border-bottom: 1px solid var(--background-modifier-border);
+  background: var(--background-secondary);
+  gap: 6px;
+  position: relative;
+}
+
+.kg-cb-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-normal);
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.kg-cb-btn-row {
+  display: flex;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.kg-cb-btn {
+  background: var(--background-primary);
+  color: var(--text-muted);
+  border: 1px solid var(--background-modifier-border);
+  padding: 4px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 11.5px;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.kg-cb-btn:hover {
+  background: var(--background-modifier-hover);
+  color: var(--text-accent);
+  border-color: var(--text-accent);
+}
+
+/* ── View switcher (top-left area) ── */
+.kg-cb-view-switcher {
+  position: absolute;
+  top: 44px;
+  left: 10px;
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  min-width: 120px;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.kg-cb-view-switcher.hidden {
+  display: none;
+}
+
+.kg-cb-view-switcher-header {
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.kg-cb-view-btn {
+  background: none;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 12px;
+  color: var(--text-accent);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.kg-cb-view-btn:hover {
+  background: var(--background-modifier-hover);
+  border-color: var(--text-accent);
+}
+
+.kg-cb-view-divider {
+  height: 1px;
+  background: var(--background-modifier-border);
+  margin: 0;
+}
+
+.kg-cb-view-item {
+  padding: 8px 14px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text-muted);
+  transition: background 0.15s;
+}
+
+.kg-cb-view-item:hover {
+  background: var(--background-modifier-hover);
+  color: var(--text-accent);
+}
+
+/* ── Legend panel (top-right, below toolbar, in graphWrap) ── */
+/* inline style in renderer.ts also sets position/top/right/z-index for extra safety */
+.kg-cb-legend-panel {
+  position: absolute !important;
+  top: 56px !important;
+  right: 10px !important;
+  left: auto !important; /* 强制关闭 left */
+  bottom: auto !important; /* 强制关闭 bottom */
+  z-index: 100 !important;
+  min-height: 0 !important;
+  min-width: 0 !important;
+  flex: 0 0 auto !important; /* prevent flex stretching */
+  align-self: flex-start !important;
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.10);
+  min-width: 100px;
+  max-width: 180px;
+  overflow: hidden;
+  display: inline-block;
+  pointer-events: auto;
+}
+
+.kg-cb-legend-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.kg-cb-legend-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.kg-cb-legend-header .kg-desc-toggle {
+  color: var(--text-faint);
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+.kg-cb-legend-panel.collapsed .kg-cb-legend-header .kg-desc-toggle {
+  transform: rotate(-90deg);
+}
+
+.kg-cb-legend-body {
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 2px 10px 8px;
+  transition: max-height 0.25s ease, padding 0.2s ease;
+}
+.kg-cb-legend-body::-webkit-scrollbar { width: 3px; }
+.kg-cb-legend-body::-webkit-scrollbar-thumb {
+  background: var(--background-modifier-border); border-radius: 2px;
+}
+.kg-cb-legend-panel.collapsed .kg-cb-legend-body {
+  max-height: 0;
+  padding: 0 10px;
+  overflow: hidden;
+}
+
+.kg-cb-legend-item {
+  display: flex;
+  align-items: center;
+  margin: 2px 0;
+  border-radius: 5px;
+  transition: opacity 0.18s;
+}
+
+.kg-cb-legend-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 5px;
+  cursor: pointer !important;
+  user-select: none;
+  transition: background 0.15s, opacity 0.18s, box-shadow 0.15s;
+  /* color is set inline to match legend color */
+}
+
+.kg-cb-legend-label:hover {
+  background: color-mix(in srgb, var(--legend-color, #64748b) 14%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--legend-color, #64748b) 40%, transparent);
+}
+
+.kg-cb-legend-item.active .kg-cb-legend-label {
+  background: color-mix(in srgb, var(--legend-color, #64748b) 18%, transparent);
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--legend-color, #64748b) 60%, transparent);
+  font-weight: 700;
+}
+
+.kg-cb-legend-item.dimmed .kg-cb-legend-label {
+  opacity: 0.35;
+}
+
+/* ── Description panel (bottom-left, above stats, in graphWrap) ── */
+/* inline style in renderer.ts also sets position/bottom/left/z-index/height for extra safety */
+.kg-cb-desc {
+  position: absolute !important;
+  bottom: 64px !important;
+  left: 14px !important;
+  top: auto !important; /* 强制关闭 top */
+  right: auto !important; /* 强制关闭 right */
+  z-index: 100 !important;
+  height: auto !important;   /* never stretch to containing block height */
+  max-height: none !important;  /* no outer max-height; body controls its own */
+  width: 260px;
+  min-height: 0 !important; /* prevent flex stretching */
+  min-width: 0 !important;
+  flex: 0 0 auto !important; /* prevent flex stretching */
+  align-self: flex-start !important;
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.10);
+  display: inline-block; /* use inline-block, perfect for absolute positioning */
+  pointer-events: auto;
+}
+
+.kg-cb-desc-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 10px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-accent);
+  flex-shrink: 0;
+  border-radius: 8px;  /* rounded when body is hidden */
+}
+
+.kg-cb-desc-header .kg-desc-toggle {
+  margin-left: auto;
+  color: var(--text-muted);
+  transition: transform 0.2s ease;
+  transform: rotate(0deg);  /* collapsed: arrow points down */
+}
+.kg-cb-desc.expanded .kg-cb-desc-header .kg-desc-toggle {
+  transform: rotate(180deg);  /* expanded: arrow points up */
+}
+
+.kg-cb-desc-body {
+  display: none;   /* collapsed: zero height, no layout impact */
+  overflow-y: auto;
+  max-height: 200px;   /* limit body height */
+  padding: 0 10px 8px;
+  border-top: 1px solid var(--background-modifier-border);
+}
+.kg-cb-desc.expanded .kg-cb-desc-body {
+  display: block;
+}
+.kg-cb-desc-body::-webkit-scrollbar { width: 3px; }
+.kg-cb-desc-body::-webkit-scrollbar-thumb {
+  background: var(--background-modifier-border); border-radius: 2px;
+}
+
+.kg-desc-content {
+  font-size: 12.5px;
+  color: var(--text-normal);
+  line-height: 1.7;
+}
+.kg-desc-content h1 { font-size: 15px; margin: 8px 0 3px; }
+.kg-desc-content h2 { font-size: 13.5px; margin: 8px 0 3px; }
+.kg-desc-content h3 { font-size: 12.5px; margin: 6px 0 2px; color: var(--text-accent); }
+.kg-desc-content p  { margin: 3px 0; color: var(--text-muted); }
+.kg-desc-content ul,
+.kg-desc-content ol { padding-left: 16px; margin: 3px 0; }
+.kg-desc-content li { margin: 1px 0; color: var(--text-muted); }
+.kg-desc-content strong { color: var(--text-normal); }
+.kg-desc-content code {
+  background: var(--background-secondary);
+  color: var(--text-accent);
+  padding: 1px 4px; border-radius: 3px;
+  font-size: 11.5px;
+}
+.kg-desc-content blockquote {
+  border-left: 3px solid var(--text-accent);
+  margin: 5px 0; padding: 3px 8px;
+  background: var(--background-secondary);
+  border-radius: 0 5px 5px 0;
+  color: var(--text-muted);
+}
+.kg-desc-content hr { border: none; border-top: 1px solid var(--background-modifier-border); margin: 6px 0; }
+.kg-desc-content table { font-size: 12px; border-collapse: collapse; width: 100%; margin: 6px 0; }
+.kg-desc-content th,
+.kg-desc-content td { border: 1px solid var(--background-modifier-border); padding: 3px 7px; }
+.kg-desc-content th { background: var(--background-secondary); font-weight: 600; }
+
+/* ── Stats bar ── */
+.kg-cb-stats {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px 4px 12px;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  background: var(--background-secondary);
+  border-top: 1px solid var(--background-modifier-border);
+}
+.kg-cb-stats strong { color: var(--text-accent); font-weight: 600; }
+.kg-cb-stat-sep { color: var(--text-faint); }
+
+/* Height control group */
+.kg-cb-height-group {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.kg-cb-height-label,
+.kg-cb-height-unit {
+  font-size: 11px;
+  color: var(--text-faint);
+  user-select: none;
+}
+
+.kg-cb-height-input {
+  width: 52px;
+  padding: 2px 5px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 4px;
+  background: var(--background-primary);
+  color: var(--text-muted);
+  font-size: 11px;
+  text-align: center;
+  cursor: text;
+  outline: none;
+  transition: border-color 0.15s, color 0.15s;
+  -moz-appearance: textfield;
+}
+.kg-cb-height-input::-webkit-outer-spin-button,
+.kg-cb-height-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.kg-cb-height-input:focus {
+  border-color: var(--text-accent);
+  color: var(--text-normal);
+}
+
+.kg-cb-resize-handle {
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: ns-resize;
+  background: var(--background-secondary);
+  border-top: 1px solid var(--background-modifier-border);
+  transition: background 0.15s;
+  user-select: none;
+  position: relative;
+}
+.kg-cb-resize-handle:hover {
+  background: var(--background-modifier-hover);
+}
+.kg-cb-resize-dots {
+  width: 32px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--background-modifier-border);
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+.kg-cb-resize-handle:hover .kg-cb-resize-dots {
+  background: var(--text-accent);
+}
+
+/* Error hints */
+.kg-cb-errors {
+  padding: 8px 14px;
+  background: rgba(239,68,68,0.06);
+  border-bottom: 1px solid rgba(239,68,68,0.2);
+  font-size: 12px;
+  color: var(--text-error, #ef4444);
+}
+.kg-cb-error-item {
+  margin-top: 3px;
+  padding-left: 10px;
+  color: var(--text-muted);
+}
+
+/* Empty state */
+.kg-cb-empty {
+  padding: 32px 14px;
+  text-align: center;
+  color: var(--text-faint);
+  font-size: 13px;
+}
+
+/* ── Settings panel ── */
+.kg-settings-tip {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+/* ============================================
+   Swimlane Diagram Styles (D3.js Based)
+   ============================================ */
+
+.swimlane-wrap {
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 8px 0;
+  background: var(--background-primary);
+  display: flex;
+  flex-direction: column;
+}
+
+.swimlane-header {
+  display: flex;
+  align-items: center;
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--background-modifier-border);
+  background: var(--background-secondary);
+  gap: 6px;
+  min-height: 40px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.swimlane-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-normal);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-right: 60px; /* leave room for absolute button */
+}
+
+.swimlane-btn {
+  background: var(--background-primary);
+  color: var(--text-muted);
+  border: 1px solid var(--background-modifier-border);
+  padding: 4px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 11.5px;
+  transition: all 0.15s;
+  flex-shrink: 0;
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.swimlane-btn:hover {
+  background: var(--background-modifier-hover);
+  color: var(--text-accent);
+  border-color: var(--text-accent);
+}
+
+/* SVG Container */
+.swimlane-svg-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.swimlane-svg {
+  display: block;
+}
+
+/* SVG Node styling */
+.swimlane-node {
+  cursor: move;
+}
+
+.swimlane-node rect {
+  transition: filter 0.15s;
+}
+
+.swimlane-node:hover rect {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+}
+
+.swimlane-node circle {
+  transition: filter 0.15s;
+}
+
+.swimlane-node:hover circle {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+}
+
+.swimlane-node text {
+  pointer-events: none;
+  user-select: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+}
+
+.swimlane-link-label {
+  pointer-events: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+}
+
+.swimlane-link-dashed {
+  stroke-dasharray: 6 3;
+  stroke-dashoffset: 0;
+  animation: swimlane-dash-flow 0.6s linear infinite;
+}
+
+@keyframes swimlane-dash-flow {
+  from {
+    stroke-dashoffset: 9;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.swimlane-error {
+  color: #d32f2f;
+  padding: 8px;
+  background: #ffebee;
+  border-radius: 4px;
+  font-size: 13px;
+  margin: 8px;
+}
+
+/* ============================================
+   Theme Selector (shared across all diagram types)
+   ============================================ */
+
+.swimlane-theme-select,
+.arch-theme-select,
+.kg-cb-theme-select {
+  background: var(--background-primary);
+  color: var(--text-muted);
+  border: 1px solid var(--background-modifier-border);
+  padding: 3px 24px 3px 8px;
+  border-radius: 5px;
+  font-size: 11px;
+  cursor: pointer;
+  outline: none;
+  flex-shrink: 0;
+  transition: all 0.15s;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 6px center;
+  background-size: 12px;
+}
+
+.swimlane-theme-select:hover,
+.arch-theme-select:hover,
+.kg-cb-theme-select:hover {
+  border-color: var(--text-accent);
+  color: var(--text-normal);
+}
+
+.swimlane-theme-select:focus,
+.arch-theme-select:focus,
+.kg-cb-theme-select:focus {
+  border-color: var(--text-accent);
+  box-shadow: 0 0 0 2px rgba(var(--text-accent), 0.15);
+}
+
+/* Position swimlane theme select next to the Reset button */
+.swimlane-theme-select {
+  position: absolute;
+  right: 70px;
+  top: 50%;
+  transform: translateY(-50%);
+}

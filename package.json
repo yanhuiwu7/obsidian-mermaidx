@@ -1,0 +1,43 @@
+{
+  "name": "obsidian-mermaidx",
+  "version": "1.0.0",
+  "description": "Unified diagram plugin with MermaidX syntax - Architecture diagrams, Knowledge graphs, and more",
+  "main": "main.js",
+  "scripts": {
+    "dev": "node esbuild.config.mjs",
+    "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production"
+  },
+  "keywords": [
+    "obsidian",
+    "mermaid",
+    "diagram",
+    "architecture",
+    "knowledge-graph",
+    "flowchart"
+  ],
+  "author": {
+    "name": "yanhuiwu7",
+    "url": "https://github.com/yanhuiwu7"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yanhuiwu7/obsidian-mermaidx"
+  },
+  "bugs": {
+    "url": "https://github.com/yanhuiwu7/obsidian-mermaidx/issues"
+  },
+  "homepage": "https://github.com/yanhuiwu7/obsidian-mermaidx#readme",
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "builtin-modules": "^4.0.0",
+    "esbuild": "^0.24.2",
+    "obsidian": "latest",
+    "typescript": "^5.7.2",
+    "@types/js-yaml": "^4.0.9"
+  },
+  "dependencies": {
+    "tslib": "^2.8.1",
+    "js-yaml": "^4.1.1"
+  }
+}
