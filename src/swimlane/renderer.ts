@@ -1012,7 +1012,7 @@ export class SwimlaneRenderer {
       .on('start', () => { /* nothing */ })
       .on('drag', ((event: D3DragEvent) => {
         const target = event.sourceEvent.target as Element;
-        const nodeGroup = target.closest('.swimlane-node');
+        const nodeGroup = target.closest('.swimlane-node') as HTMLElement | null;
         if (!nodeGroup) return;
         const nodeId = nodeGroup.getAttribute('data-node-id');
         if (!nodeId) return;
@@ -1037,7 +1037,7 @@ export class SwimlaneRenderer {
       }) as unknown as (event: D3DragEvent, d: unknown) => void)
       .on('end', ((event: D3DragEvent) => {
         const target = event.sourceEvent.target as Element;
-        const nodeGroup = target.closest('.swimlane-node');
+        const nodeGroup = target.closest('.swimlane-node') as HTMLElement | null;
         if (!nodeGroup) return;
         const nodeId = nodeGroup.getAttribute('data-node-id');
         if (!nodeId || !this.onPositionSave) return;
