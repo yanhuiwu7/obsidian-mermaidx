@@ -169,7 +169,7 @@ Override default colors for specific nodes:
 @style node1, node2 #f59e0b
 ```
 
-Matches by node ID or display name. For nodes declared as `sys[某系统]`, both `sys` and `某系统` work.
+Matches by node ID or display name. For nodes declared as `sys[系统X]`, both `sys` and `系统X` work.
 
 ---
 
@@ -277,7 +277,7 @@ lane Lane Name
 Override default colors for specific nodes:
 
 ```
-@style #f59e0b 审批节点, 通知节点
+@style #f59e0b approveNode, notifyNode
 @style node1, node2 #f59e0b
 ```
 
