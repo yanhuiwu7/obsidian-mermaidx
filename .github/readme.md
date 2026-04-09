@@ -169,7 +169,7 @@ Override default colors for specific nodes:
 @style node1, node2 #f59e0b
 ```
 
-Matches by node ID or display name. For nodes declared as `sys[某系统]`, both `sys` and `某系统` work.
+Matches by node ID or display name. For nodes declared as `alipay[支付宝]`, both `alipay` and `支付宝` work.
 
 ---
 
