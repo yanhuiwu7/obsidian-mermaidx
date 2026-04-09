@@ -3,9 +3,8 @@ import { parseDiagramSource } from './common/parser';
 import { parseArchDiagram } from './arch/parser';
 import { renderArchDiagram } from './arch/renderer';
 import { KnowledgeGraphRenderer } from './knowledge/renderer';
-import { parseSwimlane, parseSwimlaneConfig } from './swimlane/parser';
+import { parseSwimlane } from './swimlane/parser';
 import { SwimlaneRenderer } from './swimlane/renderer';
-import { getTheme } from './common/themes';
 
 const CODEBLOCK_LANG = 'mermaidX';
 
@@ -52,7 +51,7 @@ export default class MermaidXPlugin extends Plugin {
     // Register file rename event for position key migration
     this.registerEvent(
       this.app.vault.on('rename', (file, oldPath) => {
-        this.migratePositionKeys(file.path, oldPath);
+        void this.migratePositionKeys(file.path, oldPath);
       })
     );
   }
@@ -78,27 +77,29 @@ export default class MermaidXPlugin extends Plugin {
 
       // Helper: update theme in code block frontmatter
       // Uses ctx.sourcePath + source section to locate the exact code block
-      const updateThemeInSource = async (newTheme: string) => {
+      const updateThemeInSource = (newTheme: string): void => {
         if (!ctx?.sourcePath) return;
         const file = this.app.vault.getAbstractFileByPath(ctx.sourcePath);
         if (!(file instanceof TFile)) return;
-        const content = await this.app.vault.read(file);
-        const newContent = this.replaceCodeBlockFrontmatter(content, source, 'theme', newTheme);
-        if (newContent !== content) {
-          await this.app.vault.modify(file, newContent);
-        }
+        void this.app.vault.read(file).then((content) => {
+          const newContent = this.replaceCodeBlockFrontmatter(content, source, 'theme', newTheme);
+          if (newContent !== content) {
+            void this.app.vault.modify(file, newContent);
+          }
+        });
       };
 
       // Route to appropriate diagram processor
       switch (diagramType) {
         case 'archDiagram':
-        case 'arch':
+        case 'arch': {
           const archData = parseArchDiagram(result.frontmatter, result.diagramSource);
           renderArchDiagram(el, archData, themeName, updateThemeInSource);
           break;
+        }
 
         case 'knowledgeGraph':
-        case 'knowledge':
+        case 'knowledge': {
           // Create a fresh renderer + component per code block (like old plugin)
           const component = new Component();
           component.load();
@@ -108,10 +109,11 @@ export default class MermaidXPlugin extends Plugin {
             this.loadNodePositions.bind(this),
             this.clearNodePositions.bind(this)
           );
-          await renderer.render(source, el, ctx, themeName, updateThemeInSource);
+          void renderer.render(source, el, ctx, themeName, updateThemeInSource);
           break;
+        }
 
-        case 'swimlane':
+        case 'swimlane': {
           // Parse swimlane diagram
           const swimlaneResult = parseSwimlane(source);
           if (swimlaneResult.diagram.lanes.length === 0) {
@@ -139,8 +141,9 @@ export default class MermaidXPlugin extends Plugin {
             swimlaneRenderer.loadPositions(savedPositions);
           }
 
-          await swimlaneRenderer.render();
+          void swimlaneRenderer.render();
           break;
+        }
 
         default:
           el.createEl('div', {
@@ -189,9 +192,9 @@ export default class MermaidXPlugin extends Plugin {
     await this.saveSettings();
   }
 
-  private async loadNodePositions(
+  private loadNodePositions(
     key: string
-  ): Promise<Record<string, { x: number; y: number }> | undefined> {
+  ): Record<string, { x: number; y: number }> | undefined {
     return this.settings.nodePositions?.[key];
   }
 
@@ -277,7 +280,7 @@ export default class MermaidXPlugin extends Plugin {
   private clearSwimlanePositions(key: string): void {
     if (this.settings.swimlanePositions && key in this.settings.swimlanePositions) {
       delete this.settings.swimlanePositions[key];
-      this.saveSettings();
+      void this.saveSettings();
     }
   }
 

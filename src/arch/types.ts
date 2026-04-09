@@ -1,4 +1,4 @@
-import { DiagramData, DiagramFrontmatter } from '../common/types';
+import { DiagramData } from '../common/types';
 
 /**
  * Architecture Diagram Node

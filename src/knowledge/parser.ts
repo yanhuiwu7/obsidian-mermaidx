@@ -20,9 +20,9 @@ export function parseKnowledgeGraph(frontmatter: DiagramFrontmatter, source: str
   const errors: string[] = [];
   const lines = source.split("\n");
 
-  let name = frontmatter.name || frontmatter.title || 'Knowledge Graph';
-  let description = frontmatter.description || '';
-  let height: number | undefined = frontmatter.height;
+  const name = frontmatter.name || frontmatter.title || 'Knowledge Graph';
+  const description = frontmatter.description || '';
+  const height: number | undefined = frontmatter.height;
   const nodeTypes: NodeTypeConfig[] = [];
   const triples: Triple[] = [];
 
@@ -397,8 +397,10 @@ function parseYamlLinksBlock(
       }
 
       const entry = item as Record<string, unknown>;
-      const source = typeof entry.source === "string" ? entry.source : String(entry.source ?? "");
-      const target = typeof entry.target === "string" ? entry.target : String(entry.target ?? "");
+      const sourceRaw = entry.source;
+      const source = typeof sourceRaw === "string" ? sourceRaw : "";
+      const targetRaw = entry.target;
+      const target = typeof targetRaw === "string" ? targetRaw : "";
       const label = typeof entry.label === "string" ? entry.label :
                     typeof entry.relation === "string" ? entry.relation :
                     typeof entry.predicate === "string" ? entry.predicate : "";

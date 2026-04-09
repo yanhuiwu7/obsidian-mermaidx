@@ -1,4 +1,4 @@
-import { ArchDiagramData, ArchLayer, ArchGroup, ArchNode, ArchLink } from './types';
+import { ArchDiagramData, ArchLayer, ArchGroup, ArchNode } from './types';
 import { DiagramFrontmatter } from '../common/types';
 
 /**
@@ -131,7 +131,6 @@ export function parseArchDiagram(frontmatter: DiagramFrontmatter, source: string
       const id = bracketMatch ? bracketMatch[1] : raw;
       const label = bracketMatch ? bracketMatch[2] : raw;
       const parentLayer = currentLayer();
-      const parentGroup = currentGroup();
 
       if (!parentLayer) {
         // Top-level subgraph → middle layer

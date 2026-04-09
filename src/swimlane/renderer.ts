@@ -10,7 +10,6 @@ import type {
   SwimlaneDiagram,
   SwimlaneRow,
   SwimlaneNode,
-  SwimlaneLink,
 } from './types';
 
 // ─── D3 type shims (same pattern as knowledge module) ───────────────────────
@@ -180,18 +179,21 @@ export class SwimlaneRenderer {
 
   public setTheme(themeName: string): void {
     this.theme = getTheme(themeName);
-    this.render();
+    void this.render();
   }
 
   // ── Public: render ──────────────────────────────────────────────────────────
 
   public async render(): Promise<void> {
-    this.container.innerHTML = '';
+    this.container.empty();
     this.nodePositions.clear();
 
     this.d3 = await ensureD3();
     if (!this.d3) {
-      this.container.innerHTML = '<div class="swimlane-error">Failed to load D3.js</div>';
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'swimlane-error';
+      errorDiv.textContent = 'Failed to load diagram library';
+      this.container.appendChild(errorDiv);
       return;
     }
 
@@ -263,7 +265,7 @@ export class SwimlaneRenderer {
 
     // Spacer to push controls to the right
     const spacer = document.createElement('span');
-    spacer.style.flex = '1';
+    spacer.setCssProps({ flex: '1' });
     header.appendChild(spacer);
 
     // Theme selector
@@ -414,7 +416,6 @@ export class SwimlaneRenderer {
     const rowHeight = this.getRowHeight(row);
     // Circle nodes: isStartNode, isEndNode, or shape === 'circle'
     const isCircle = node.isStartNode || node.isEndNode || node.shape === 'circle';
-    const isTwoLine = !!node.operator;
     const nodeW = isCircle ? CIRCLE_NODE_SIZE : NODE_WIDTH;
     const nodeH = isCircle ? CIRCLE_NODE_SIZE : NODE_HEIGHT;
 
@@ -1006,16 +1007,17 @@ export class SwimlaneRenderer {
 
   private attachDragBehavior(): void {
     if (!this.svg || !this.d3) return;
-    const self = this;
 
     const drag = this.d3.drag()
       .on('start', () => { /* nothing */ })
-      .on('drag', function(event: D3DragEvent) {
-        const g = self.d3!.select(this as Element);
-        const nodeId = (g as unknown as { attr: (n: string) => string }).attr('data-node-id');
+      .on('drag', ((event: D3DragEvent) => {
+        const target = event.sourceEvent.target as Element;
+        const nodeGroup = target.closest('.swimlane-node');
+        if (!nodeGroup) return;
+        const nodeId = nodeGroup.getAttribute('data-node-id');
         if (!nodeId) return;
 
-        const transform = (g as unknown as { attr: (n: string) => string }).attr('transform') || 'translate(0,0)';
+        const transform = nodeGroup.getAttribute('transform') || 'translate(0,0)';
         const m = transform.match(/translate\(([^,]+),\s*([^)]+)\)/);
         let cx = m ? parseFloat(m[1]) : 0;
         let cy = m ? parseFloat(m[2]) : 0;
@@ -1023,28 +1025,30 @@ export class SwimlaneRenderer {
         cy += event.dy;
 
         // Clamp to SVG bounds
-        const nl = self.layout.nodeLayouts.get(nodeId);
+        const nl = this.layout.nodeLayouts.get(nodeId);
         if (nl) {
-          cx = Math.max(0, Math.min(cx, self.layout.totalWidth - nl.width));
-          cy = Math.max(LANE_HEADER_HEIGHT, Math.min(cy, self.layout.totalHeight - nl.height));
+          cx = Math.max(0, Math.min(cx, this.layout.totalWidth - nl.width));
+          cy = Math.max(LANE_HEADER_HEIGHT, Math.min(cy, this.layout.totalHeight - nl.height));
         }
 
-        (g as unknown as { attr: (n: string, v: string) => D3Selection }).attr('transform', `translate(${cx}, ${cy})`);
-        self.nodePositions.set(nodeId, { x: cx, y: cy, pinned: true });
-        self.updateAllLinks();
-      })
-      .on('end', function(event: D3DragEvent) {
-        const g = self.d3!.select(this as Element);
-        const nodeId = (g as unknown as { attr: (n: string) => string }).attr('data-node-id');
-        if (!nodeId || !self.onPositionSave) return;
+        nodeGroup.setAttribute('transform', `translate(${cx}, ${cy})`);
+        this.nodePositions.set(nodeId, { x: cx, y: cy, pinned: true });
+        this.updateAllLinks();
+      }) as unknown as (event: D3DragEvent, d: unknown) => void)
+      .on('end', ((event: D3DragEvent) => {
+        const target = event.sourceEvent.target as Element;
+        const nodeGroup = target.closest('.swimlane-node');
+        if (!nodeGroup) return;
+        const nodeId = nodeGroup.getAttribute('data-node-id');
+        if (!nodeId || !this.onPositionSave) return;
 
-        if (self.saveTimeout) clearTimeout(self.saveTimeout);
-        self.saveTimeout = setTimeout(() => {
-          if (self.onPositionSave) {
-            self.onPositionSave(self.getPositions());
+        if (this.saveTimeout) clearTimeout(this.saveTimeout);
+        this.saveTimeout = setTimeout(() => {
+          if (this.onPositionSave) {
+            this.onPositionSave(this.getPositions());
           }
         }, 500);
-      });
+      }) as unknown as (event: D3DragEvent, d: unknown) => void);
 
     (this.svg as unknown as { selectAll: (s: string) => { call: (fn: unknown) => void } })
       .selectAll('.swimlane-node')
