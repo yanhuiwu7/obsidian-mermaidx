@@ -147,7 +147,7 @@ export default class MermaidXPlugin extends Plugin {
 
         default:
           el.createEl('div', {
-            text: `Unknown diagram type: ${diagramType}. Use type: archDiagram or type: knowledgeGraph in frontmatter.`,
+            text: `Unknown diagram type: ${diagramType}. Use type: archDiagram, knowledgeGraph, or swimlane in frontmatter.`,
             cls: 'mermaidx-error'
           });
       }

@@ -14,6 +14,7 @@
 export const THEME_NAMES = [
   'default', 'warm', 'dark',
   'ocean', 'forest', 'blueprint', 'ink',
+  'wireframe',
 ] as const;
 export type ThemeName = (typeof THEME_NAMES)[number];
 
@@ -101,6 +102,8 @@ export interface KgTokens {
   background: string;
   /** Default fallback node color (when no @style) */
   fallbackNodeColor: string;
+  /** Override node body fill (empty = use fallbackNodeColor) */
+  nodeBodyFill: string;
   /** Default link color (when no @style) */
   linkColor: string;
   /** Link label background fill */
@@ -180,6 +183,7 @@ const themes: Record<ThemeName, DiagramTheme> = {
     kg: {
       background:           '#ffffff',
       fallbackNodeColor:    '#64748b',
+      nodeBodyFill:         '',
       linkColor:            '#cbd5e1',
       linkLabelBg:          'rgba(245,247,250,0.92)',
       linkLabelBorder:      '#e2e8f0',
@@ -238,6 +242,7 @@ const themes: Record<ThemeName, DiagramTheme> = {
     kg: {
       background:           '#fdf8f3',
       fallbackNodeColor:    '#d97706',
+      nodeBodyFill:         '',
       linkColor:            '#d4c5b2',
       linkLabelBg:          'rgba(245,235,224,0.92)',
       linkLabelBorder:      '#e8d5c4',
@@ -296,6 +301,7 @@ const themes: Record<ThemeName, DiagramTheme> = {
     kg: {
       background:           '#1e1e2e',
       fallbackNodeColor:    '#89b4fa',
+      nodeBodyFill:         '',
       linkColor:            '#585b70',
       linkLabelBg:          'rgba(30,30,46,0.92)',
       linkLabelBorder:      '#45475a',
@@ -354,6 +360,7 @@ const themes: Record<ThemeName, DiagramTheme> = {
     kg: {
       background:           '#f0f7ff',
       fallbackNodeColor:    '#0097a7',
+      nodeBodyFill:         '',
       linkColor:            '#b8d4e8',
       linkLabelBg:          'rgba(218,234,247,0.92)',
       linkLabelBorder:      '#b8d4e8',
@@ -421,6 +428,7 @@ const themes: Record<ThemeName, DiagramTheme> = {
       loopDimColor:         '#1b5e20',
       linkDimColor:         '#dce9d6',
       nodeTextFill:         '#ffffff',
+      nodeBodyFill:         '',
     },
   },
 
@@ -470,6 +478,7 @@ const themes: Record<ThemeName, DiagramTheme> = {
     kg: {
       background:           '#0a1929',
       fallbackNodeColor:    '#4dd0e1',
+      nodeBodyFill:         '',
       linkColor:            '#1a3a5c',
       linkLabelBg:          'rgba(10,25,41,0.92)',
       linkLabelBorder:      '#2a5080',
@@ -478,7 +487,66 @@ const themes: Record<ThemeName, DiagramTheme> = {
       loopColor:            '#4dd0e1',
       loopDimColor:         '#0097a7',
       linkDimColor:         '#0d2137',
-      nodeTextFill:         '#b0d4f1',
+      nodeTextFill:         '#ffffff',
+    },
+  },
+
+  // ── Wireframe (minimal black & white, no fills) ─────────────────────────
+  wireframe: {
+    name: 'wireframe',
+    label: '🤍 Wireframe',
+    swimlane: {
+      background:      '#ffffff',
+      laneHeaderBg:    '#ffffff',
+      laneHeaderText:  '#1a1a1a',
+      laneDivider:     '#cccccc',
+      outerBorder:     '#999999',
+      nodeFill:        '#ffffff',
+      nodeBorder:      '#999999',
+      nodeText:        '#1a1a1a',
+      twoLineTopFill:  '#ffffff',
+      twoLineBotFill:  '#f8f8f8',
+      twoLineTopText:  '#1a1a1a',
+      twoLineBotText:  '#666666',
+      startFill:       '#ffffff',
+      startBorder:     '#999999',
+      endFill:         '#ffffff',
+      endBorder:       '#999999',
+      linkColor:       '#999999',
+      arrowColor:      '#999999',
+      arrowColorDashed:'#cccccc',
+      linkLabelColor:  '#666666',
+      linkLabelBg:     '#ffffff',
+    },
+    arch: {
+      background:       '#ffffff',
+      layerBorder:      '#999999',
+      layerTitleColor:  '#1a1a1a',
+      groupBg:          '#ffffff',
+      linkColor:        '#999999',
+      linkLabelBg:      '#ffffff',
+      nodeType: {
+        user:     { fill: '#ffffff', border: '#999999', text: '#1a1a1a' },
+        service:  { fill: '#ffffff', border: '#999999', text: '#1a1a1a' },
+        infra:    { fill: '#ffffff', border: '#999999', text: '#1a1a1a' },
+        external: { fill: '#ffffff', border: '#999999', text: '#1a1a1a' },
+        monitor:  { fill: '#ffffff', border: '#999999', text: '#1a1a1a' },
+        node:     { fill: '#ffffff', border: '#999999', text: '#1a1a1a' },
+      },
+    },
+    kg: {
+      background:           '#ffffff',
+      fallbackNodeColor:    '#999999',
+      nodeBodyFill:         '#ffffff',
+      linkColor:            '#cccccc',
+      linkLabelBg:          'rgba(255,255,255,0.92)',
+      linkLabelBorder:      '#cccccc',
+      arrowColor:           '#999999',
+      arrowHighlightColor:  '#666666',
+      loopColor:            '#999999',
+      loopDimColor:         '#cccccc',
+      linkDimColor:         '#eeeeee',
+      nodeTextFill:         '#1a1a1a',
     },
   },
 
@@ -528,6 +596,7 @@ const themes: Record<ThemeName, DiagramTheme> = {
     kg: {
       background:           '#faf8f5',
       fallbackNodeColor:    '#333333',
+      nodeBodyFill:         '',
       linkColor:            '#d0c8c0',
       linkLabelBg:          'rgba(250,248,245,0.92)',
       linkLabelBorder:      '#d0c8c0',

@@ -1270,13 +1270,13 @@ class GraphRenderer {
 
       if (shape === "circle" || shape === "ellipse") {
         nodeGroup.append("ellipse").attr("class", "kg-node-glow")
-          .attr("rx", r + 8).attr("ry", shape === "ellipse" ? (r + 8) * 0.7 : r + 8)
+          .attr("rx", r + 4).attr("ry", shape === "ellipse" ? (r + 4) * 0.7 : r + 4)
           .attr("fill", color).attr("opacity", 0.12).attr("pointer-events", "none");
       } else {
         // rect, roundrect, diamond, hexagon - use rect glow
         const hw = this.getNodeHalfWidth(d);
         const hh = this.getNodeHalfHeight(d);
-        const glowPad = 8;
+        const glowPad = 4;
         nodeGroup.append("rect").attr("class", "kg-node-glow")
           .attr("x", -hw - glowPad).attr("y", -hh - glowPad)
           .attr("width", (hw + glowPad) * 2).attr("height", (hh + glowPad) * 2)
@@ -1290,26 +1290,27 @@ class GraphRenderer {
       const nodeGroup = this.d3.select(nodes[i]);
       const shape = d.shape || "circle";
       const color = this.getNodeColor(d.name);
+      const bodyFill = this.theme.kg.nodeBodyFill || color;
       const r = this.getNodeSize(d);
 
       if (shape === "circle") {
         nodeGroup.append("circle").attr("class", "kg-node-body")
           .attr("r", r)
-          .attr("fill", color).attr("stroke", color)
+          .attr("fill", bodyFill).attr("stroke", color)
           .attr("stroke-width", 2.5).attr("stroke-opacity", 0.6);
       } else if (shape === "ellipse") {
         const rx = r + 8;
         const ry = (r + 8) * 0.7;
         nodeGroup.append("ellipse").attr("class", "kg-node-body")
           .attr("rx", rx).attr("ry", ry)
-          .attr("fill", color).attr("stroke", color)
+          .attr("fill", bodyFill).attr("stroke", color)
           .attr("stroke-width", 2.5).attr("stroke-opacity", 0.6);
       } else if (shape === "rect") {
         const hw = this.getNodeHalfWidth(d);
         const hh = this.getNodeHalfHeight(d);
         nodeGroup.append("rect").attr("class", "kg-node-body")
           .attr("x", -hw).attr("y", -hh).attr("width", hw * 2).attr("height", hh * 2)
-          .attr("fill", color).attr("stroke", color)
+          .attr("fill", bodyFill).attr("stroke", color)
           .attr("stroke-width", 2.5).attr("stroke-opacity", 0.6);
       } else if (shape === "roundrect") {
         const hw = this.getNodeHalfWidth(d);
@@ -1317,7 +1318,7 @@ class GraphRenderer {
         nodeGroup.append("rect").attr("class", "kg-node-body")
           .attr("x", -hw).attr("y", -hh).attr("width", hw * 2).attr("height", hh * 2)
           .attr("rx", 8).attr("ry", 8)
-          .attr("fill", color).attr("stroke", color)
+          .attr("fill", bodyFill).attr("stroke", color)
           .attr("stroke-width", 2.5).attr("stroke-opacity", 0.6);
       } else if (shape === "diamond") {
         const hw = this.getNodeHalfWidth(d);
@@ -1325,7 +1326,7 @@ class GraphRenderer {
         const points = `0,${-hh} ${hw},0 0,${hh} ${-hw},0`;
         nodeGroup.append("polygon").attr("class", "kg-node-body")
           .attr("points", points)
-          .attr("fill", color).attr("stroke", color)
+          .attr("fill", bodyFill).attr("stroke", color)
           .attr("stroke-width", 2.5).attr("stroke-opacity", 0.6);
       } else if (shape === "hexagon") {
         const hw = this.getNodeHalfWidth(d);
@@ -1334,7 +1335,7 @@ class GraphRenderer {
         const points = `${-hw + inset},${-hh} ${hw - inset},${-hh} ${hw},0 ${hw - inset},${hh} ${-hw + inset},${hh} ${-hw},0`;
         nodeGroup.append("polygon").attr("class", "kg-node-body")
           .attr("points", points)
-          .attr("fill", color).attr("stroke", color)
+          .attr("fill", bodyFill).attr("stroke", color)
           .attr("stroke-width", 2.5).attr("stroke-opacity", 0.6);
       }
     });

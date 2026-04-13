@@ -19,6 +19,7 @@ export interface ArchGroup {
   label: string;
   nodes: ArchNode[];
   direction?: 'LR' | 'TD' | 'RL' | 'BT';
+  columns?: number;
 }
 
 /**
@@ -30,6 +31,7 @@ export interface ArchLayer {
   groups?: ArchGroup[];
   nodes?: ArchNode[];
   direction?: 'LR' | 'TD' | 'TB' | 'RL' | 'BT';
+  columns?: number;
   nodeType?: 'user' | 'service' | 'infra' | 'external' | 'monitor' | 'node';
 }
 

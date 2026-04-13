@@ -2735,9 +2735,22 @@ function parseArchDiagram(frontmatter, source) {
       }
       continue;
     }
+    const columnsMatch = line.match(/^columns\s+(\d+)$/);
+    if (columnsMatch) {
+      const cols = parseInt(columnsMatch[1], 10);
+      if (cols > 0) {
+        const topFrame = stack[stack.length - 1];
+        if (topFrame == null ? void 0 : topFrame.group) {
+          topFrame.group.columns = cols;
+        } else if (topFrame == null ? void 0 : topFrame.layer) {
+          topFrame.layer.columns = cols;
+        }
+      }
+      continue;
+    }
     if (line.startsWith("left:")) {
       const raw = line.substring(5).trim();
-      const bracketMatch = raw.match(/^([\w-]+)\[(.+)\]$/);
+      const bracketMatch = raw.match(/^([\w\u4e00-\u9fa5-]+)\[(.+)\]$/);
       const id = bracketMatch ? bracketMatch[1] : raw;
       const label = bracketMatch ? bracketMatch[2] : raw;
       const layer2 = {
@@ -2754,7 +2767,7 @@ function parseArchDiagram(frontmatter, source) {
     }
     if (line.startsWith("right:")) {
       const raw = line.substring(6).trim();
-      const bracketMatch = raw.match(/^([\w-]+)\[(.+)\]$/);
+      const bracketMatch = raw.match(/^([\w\u4e00-\u9fa5-]+)\[(.+)\]$/);
       const id = bracketMatch ? bracketMatch[1] : raw;
       const label = bracketMatch ? bracketMatch[2] : raw;
       const rightColorIndex = data.middleLayers.length + (data.leftLayer ? 1 : 0);
@@ -2772,7 +2785,7 @@ function parseArchDiagram(frontmatter, source) {
     }
     if (line.startsWith("subgraph ") || line === "subgraph") {
       const raw = line.startsWith("subgraph ") ? line.substring(9).trim() : "";
-      const bracketMatch = raw.match(/^([\w-]+)\[(.+)\]$/);
+      const bracketMatch = raw.match(/^([\w\u4e00-\u9fa5-]+)\[(.+)\]$/);
       const id = bracketMatch ? bracketMatch[1] : raw;
       const label = bracketMatch ? bracketMatch[2] : raw;
       const parentLayer = currentLayer();
@@ -2819,7 +2832,7 @@ function parseArchDiagram(frontmatter, source) {
     const layer = currentLayer();
     const group = currentGroup();
     const nodeType = (layer == null ? void 0 : layer.nodeType) || "service";
-    const nodeIdTextMatch = line.match(/^([\w-]+)\[(.+)\]$/);
+    const nodeIdTextMatch = line.match(/^([\w\u4e00-\u9fa5-]+)\[(.+)\]$/);
     if (nodeIdTextMatch) {
       const node = {
         id: nodeIdTextMatch[1],
@@ -2864,9 +2877,9 @@ function parseArchDiagram(frontmatter, source) {
       }
       continue;
     }
-    const plainNodeMatch = line.match(/^[\w-]+$/);
+    const plainNodeMatch = line.match(/^[\w\u4e00-\u9fa5\-/\p{Emoji_Presentation}\p{Extended_Pictographic}\uFE0F\u200D]+$/u);
     if (plainNodeMatch) {
-      const nodeId2 = line.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]/g, "");
+      const nodeId2 = line.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\u4e00-\u9fa5\-/\p{Emoji_Presentation}\p{Extended_Pictographic}\uFE0F\u200D]/gu, "");
       const node = {
         id: nodeId2,
         name: line,
@@ -2890,7 +2903,8 @@ var THEME_NAMES = [
   "ocean",
   "forest",
   "blueprint",
-  "ink"
+  "ink",
+  "wireframe"
 ];
 var themes = {
   // ── Default (current style, unchanged) ──────────────────────────────────
@@ -2939,6 +2953,7 @@ var themes = {
     kg: {
       background: "#ffffff",
       fallbackNodeColor: "#64748b",
+      nodeBodyFill: "",
       linkColor: "#cbd5e1",
       linkLabelBg: "rgba(245,247,250,0.92)",
       linkLabelBorder: "#e2e8f0",
@@ -2996,6 +3011,7 @@ var themes = {
     kg: {
       background: "#fdf8f3",
       fallbackNodeColor: "#d97706",
+      nodeBodyFill: "",
       linkColor: "#d4c5b2",
       linkLabelBg: "rgba(245,235,224,0.92)",
       linkLabelBorder: "#e8d5c4",
@@ -3053,6 +3069,7 @@ var themes = {
     kg: {
       background: "#1e1e2e",
       fallbackNodeColor: "#89b4fa",
+      nodeBodyFill: "",
       linkColor: "#585b70",
       linkLabelBg: "rgba(30,30,46,0.92)",
       linkLabelBorder: "#45475a",
@@ -3110,6 +3127,7 @@ var themes = {
     kg: {
       background: "#f0f7ff",
       fallbackNodeColor: "#0097a7",
+      nodeBodyFill: "",
       linkColor: "#b8d4e8",
       linkLabelBg: "rgba(218,234,247,0.92)",
       linkLabelBorder: "#b8d4e8",
@@ -3175,7 +3193,8 @@ var themes = {
       loopColor: "#2e7d32",
       loopDimColor: "#1b5e20",
       linkDimColor: "#dce9d6",
-      nodeTextFill: "#ffffff"
+      nodeTextFill: "#ffffff",
+      nodeBodyFill: ""
     }
   },
   // ── Blueprint (engineering blueprint style) ─────────────────────────────
@@ -3224,6 +3243,7 @@ var themes = {
     kg: {
       background: "#0a1929",
       fallbackNodeColor: "#4dd0e1",
+      nodeBodyFill: "",
       linkColor: "#1a3a5c",
       linkLabelBg: "rgba(10,25,41,0.92)",
       linkLabelBorder: "#2a5080",
@@ -3232,7 +3252,65 @@ var themes = {
       loopColor: "#4dd0e1",
       loopDimColor: "#0097a7",
       linkDimColor: "#0d2137",
-      nodeTextFill: "#b0d4f1"
+      nodeTextFill: "#ffffff"
+    }
+  },
+  // ── Wireframe (minimal black & white, no fills) ─────────────────────────
+  wireframe: {
+    name: "wireframe",
+    label: "\u{1F90D} Wireframe",
+    swimlane: {
+      background: "#ffffff",
+      laneHeaderBg: "#ffffff",
+      laneHeaderText: "#1a1a1a",
+      laneDivider: "#cccccc",
+      outerBorder: "#999999",
+      nodeFill: "#ffffff",
+      nodeBorder: "#999999",
+      nodeText: "#1a1a1a",
+      twoLineTopFill: "#ffffff",
+      twoLineBotFill: "#f8f8f8",
+      twoLineTopText: "#1a1a1a",
+      twoLineBotText: "#666666",
+      startFill: "#ffffff",
+      startBorder: "#999999",
+      endFill: "#ffffff",
+      endBorder: "#999999",
+      linkColor: "#999999",
+      arrowColor: "#999999",
+      arrowColorDashed: "#cccccc",
+      linkLabelColor: "#666666",
+      linkLabelBg: "#ffffff"
+    },
+    arch: {
+      background: "#ffffff",
+      layerBorder: "#999999",
+      layerTitleColor: "#1a1a1a",
+      groupBg: "#ffffff",
+      linkColor: "#999999",
+      linkLabelBg: "#ffffff",
+      nodeType: {
+        user: { fill: "#ffffff", border: "#999999", text: "#1a1a1a" },
+        service: { fill: "#ffffff", border: "#999999", text: "#1a1a1a" },
+        infra: { fill: "#ffffff", border: "#999999", text: "#1a1a1a" },
+        external: { fill: "#ffffff", border: "#999999", text: "#1a1a1a" },
+        monitor: { fill: "#ffffff", border: "#999999", text: "#1a1a1a" },
+        node: { fill: "#ffffff", border: "#999999", text: "#1a1a1a" }
+      }
+    },
+    kg: {
+      background: "#ffffff",
+      fallbackNodeColor: "#999999",
+      nodeBodyFill: "#ffffff",
+      linkColor: "#cccccc",
+      linkLabelBg: "rgba(255,255,255,0.92)",
+      linkLabelBorder: "#cccccc",
+      arrowColor: "#999999",
+      arrowHighlightColor: "#666666",
+      loopColor: "#999999",
+      loopDimColor: "#cccccc",
+      linkDimColor: "#eeeeee",
+      nodeTextFill: "#1a1a1a"
     }
   },
   // ── Ink / Chinese ink painting (black-white-red seal) ────────────────────
@@ -3281,6 +3359,7 @@ var themes = {
     kg: {
       background: "#faf8f5",
       fallbackNodeColor: "#333333",
+      nodeBodyFill: "",
       linkColor: "#d0c8c0",
       linkLabelBg: "rgba(250,248,245,0.92)",
       linkLabelBorder: "#d0c8c0",
@@ -3392,13 +3471,23 @@ function renderLayer(container, layer, position) {
   const contentContainer = layerEl.createDiv({ cls: "arch-layer-content" });
   if (hasGroups) {
     const groupsContainer = contentContainer.createDiv({ cls: "arch-groups" });
-    for (const group of layer.groups) {
-      renderGroup(groupsContainer, group);
+    for (let i = 0; i < layer.groups.length; i++) {
+      if (i > 0) {
+        groupsContainer.createDiv({ cls: "arch-group-divider" });
+      }
+      renderGroup(groupsContainer, layer.groups[i]);
     }
   }
   if (hasDirectNodes) {
     const nodesDirectionClass = layer.direction ? `arch-nodes-${layer.direction}` : "";
-    const nodesContainer = contentContainer.createDiv({ cls: `arch-nodes ${nodesDirectionClass}` });
+    const columnsClass = layer.columns ? "arch-nodes-columns" : "";
+    const nodesContainer = contentContainer.createDiv({
+      cls: `arch-nodes ${nodesDirectionClass} ${columnsClass}`.trim(),
+      attr: layer.columns ? { "data-columns": String(layer.columns) } : {}
+    });
+    if (layer.columns) {
+      nodesContainer.setCssProps({ "--arch-cols": String(layer.columns), "--arch-gap": "8px", "flex-wrap": "wrap" });
+    }
     for (const node of layer.nodes) {
       renderNode(nodesContainer, node);
     }
@@ -3413,7 +3502,14 @@ function renderGroup(container, group) {
   if (group.label) {
     groupEl.createEl("h5", { text: group.label, cls: "arch-group-title" });
   }
-  const nodesContainer = groupEl.createDiv({ cls: "arch-nodes" });
+  const columnsClass = group.columns ? "arch-nodes-columns" : "";
+  const nodesContainer = groupEl.createDiv({
+    cls: `arch-nodes ${columnsClass}`.trim(),
+    attr: group.columns ? { "data-columns": String(group.columns) } : {}
+  });
+  if (group.columns) {
+    nodesContainer.setCssProps({ "--arch-cols": String(group.columns), "--arch-gap": "8px", "flex-wrap": "wrap" });
+  }
   for (const node of group.nodes) {
     renderNode(nodesContainer, node);
   }
@@ -4020,7 +4116,7 @@ var KnowledgeGraphRenderer = class {
     );
     const positionKey = ctx ? generatePositionKey(ctx.sourcePath, config) : "";
     renderer.setPositionKey(positionKey);
-    renderer.render();
+    void renderer.render();
     const data = renderer.getData();
     stats.empty();
     const statNode = stats.createSpan({ cls: "kg-cb-stat" });
@@ -4441,7 +4537,7 @@ var GraphRenderer = class {
   getData() {
     return this.data;
   }
-  async render() {
+  render() {
     try {
       if (this.positionCallbacks.onLoad && this.positionKey) {
         const savedPositions = this.positionCallbacks.onLoad(this.positionKey);
@@ -4764,11 +4860,11 @@ var GraphRenderer = class {
       const color = this.getNodeColor(d.name);
       const r = this.getNodeSize(d);
       if (shape === "circle" || shape === "ellipse") {
-        nodeGroup.append("ellipse").attr("class", "kg-node-glow").attr("rx", r + 8).attr("ry", shape === "ellipse" ? (r + 8) * 0.7 : r + 8).attr("fill", color).attr("opacity", 0.12).attr("pointer-events", "none");
+        nodeGroup.append("ellipse").attr("class", "kg-node-glow").attr("rx", r + 4).attr("ry", shape === "ellipse" ? (r + 4) * 0.7 : r + 4).attr("fill", color).attr("opacity", 0.12).attr("pointer-events", "none");
       } else {
         const hw = this.getNodeHalfWidth(d);
         const hh = this.getNodeHalfHeight(d);
-        const glowPad = 8;
+        const glowPad = 4;
         nodeGroup.append("rect").attr("class", "kg-node-glow").attr("x", -hw - glowPad).attr("y", -hh - glowPad).attr("width", (hw + glowPad) * 2).attr("height", (hh + glowPad) * 2).attr("rx", shape === "roundrect" ? 10 : 4).attr("ry", shape === "roundrect" ? 10 : 4).attr("fill", color).attr("opacity", 0.12).attr("pointer-events", "none");
       }
     });
@@ -4776,32 +4872,33 @@ var GraphRenderer = class {
       const nodeGroup = this.d3.select(nodes2[i]);
       const shape = d.shape || "circle";
       const color = this.getNodeColor(d.name);
+      const bodyFill = this.theme.kg.nodeBodyFill || color;
       const r = this.getNodeSize(d);
       if (shape === "circle") {
-        nodeGroup.append("circle").attr("class", "kg-node-body").attr("r", r).attr("fill", color).attr("stroke", color).attr("stroke-width", 2.5).attr("stroke-opacity", 0.6);
+        nodeGroup.append("circle").attr("class", "kg-node-body").attr("r", r).attr("fill", bodyFill).attr("stroke", color).attr("stroke-width", 2.5).attr("stroke-opacity", 0.6);
       } else if (shape === "ellipse") {
         const rx = r + 8;
         const ry = (r + 8) * 0.7;
-        nodeGroup.append("ellipse").attr("class", "kg-node-body").attr("rx", rx).attr("ry", ry).attr("fill", color).attr("stroke", color).attr("stroke-width", 2.5).attr("stroke-opacity", 0.6);
+        nodeGroup.append("ellipse").attr("class", "kg-node-body").attr("rx", rx).attr("ry", ry).attr("fill", bodyFill).attr("stroke", color).attr("stroke-width", 2.5).attr("stroke-opacity", 0.6);
       } else if (shape === "rect") {
         const hw = this.getNodeHalfWidth(d);
         const hh = this.getNodeHalfHeight(d);
-        nodeGroup.append("rect").attr("class", "kg-node-body").attr("x", -hw).attr("y", -hh).attr("width", hw * 2).attr("height", hh * 2).attr("fill", color).attr("stroke", color).attr("stroke-width", 2.5).attr("stroke-opacity", 0.6);
+        nodeGroup.append("rect").attr("class", "kg-node-body").attr("x", -hw).attr("y", -hh).attr("width", hw * 2).attr("height", hh * 2).attr("fill", bodyFill).attr("stroke", color).attr("stroke-width", 2.5).attr("stroke-opacity", 0.6);
       } else if (shape === "roundrect") {
         const hw = this.getNodeHalfWidth(d);
         const hh = this.getNodeHalfHeight(d);
-        nodeGroup.append("rect").attr("class", "kg-node-body").attr("x", -hw).attr("y", -hh).attr("width", hw * 2).attr("height", hh * 2).attr("rx", 8).attr("ry", 8).attr("fill", color).attr("stroke", color).attr("stroke-width", 2.5).attr("stroke-opacity", 0.6);
+        nodeGroup.append("rect").attr("class", "kg-node-body").attr("x", -hw).attr("y", -hh).attr("width", hw * 2).attr("height", hh * 2).attr("rx", 8).attr("ry", 8).attr("fill", bodyFill).attr("stroke", color).attr("stroke-width", 2.5).attr("stroke-opacity", 0.6);
       } else if (shape === "diamond") {
         const hw = this.getNodeHalfWidth(d);
         const hh = this.getNodeHalfHeight(d);
         const points = `0,${-hh} ${hw},0 0,${hh} ${-hw},0`;
-        nodeGroup.append("polygon").attr("class", "kg-node-body").attr("points", points).attr("fill", color).attr("stroke", color).attr("stroke-width", 2.5).attr("stroke-opacity", 0.6);
+        nodeGroup.append("polygon").attr("class", "kg-node-body").attr("points", points).attr("fill", bodyFill).attr("stroke", color).attr("stroke-width", 2.5).attr("stroke-opacity", 0.6);
       } else if (shape === "hexagon") {
         const hw = this.getNodeHalfWidth(d);
         const hh = this.getNodeHalfHeight(d);
         const inset = hw * 0.3;
         const points = `${-hw + inset},${-hh} ${hw - inset},${-hh} ${hw},0 ${hw - inset},${hh} ${-hw + inset},${hh} ${-hw},0`;
-        nodeGroup.append("polygon").attr("class", "kg-node-body").attr("points", points).attr("fill", color).attr("stroke", color).attr("stroke-width", 2.5).attr("stroke-opacity", 0.6);
+        nodeGroup.append("polygon").attr("class", "kg-node-body").attr("points", points).attr("fill", bodyFill).attr("stroke", color).attr("stroke-width", 2.5).attr("stroke-opacity", 0.6);
       }
     });
     this.nodeElements.append("text").attr("class", "kg-node-text-stroke").attr("text-anchor", "middle").attr("dy", "0.35em").text((d) => d.name.length > 8 ? d.name.slice(0, 7) + "\u2026" : d.name).style("fill", "none").style("stroke", (d) => this.getNodeColor(d.name)).style("stroke-width", "3px").style("stroke-opacity", "0.5").style("font-size", (d) => this.getNodeSize(d) > 30 ? "13px" : "12px").style("pointer-events", "none");
@@ -6128,15 +6225,16 @@ var MermaidXPlugin = class extends import_obsidian2.Plugin {
       }
       const { diagramType } = result;
       const themeName = result.frontmatter.theme || null;
-      const updateThemeInSource = async (newTheme) => {
+      const updateThemeInSource = (newTheme) => {
         if (!(ctx == null ? void 0 : ctx.sourcePath)) return;
         const file = this.app.vault.getAbstractFileByPath(ctx.sourcePath);
         if (!(file instanceof import_obsidian2.TFile)) return;
-        const content = await this.app.vault.read(file);
-        const newContent = this.replaceCodeBlockFrontmatter(content, source, "theme", newTheme);
-        if (newContent !== content) {
-          await this.app.vault.modify(file, newContent);
-        }
+        void this.app.vault.read(file).then((content) => {
+          const newContent = this.replaceCodeBlockFrontmatter(content, source, "theme", newTheme);
+          if (newContent !== content) {
+            void this.app.vault.modify(file, newContent);
+          }
+        });
       };
       switch (diagramType) {
         case "archDiagram":
@@ -6184,7 +6282,7 @@ var MermaidXPlugin = class extends import_obsidian2.Plugin {
         }
         default:
           el.createEl("div", {
-            text: `Unknown diagram type: ${diagramType}. Use type: archDiagram or type: knowledgeGraph in frontmatter.`,
+            text: `Unknown diagram type: ${diagramType}. Use type: archDiagram, knowledgeGraph, or swimlane in frontmatter.`,
             cls: "mermaidx-error"
           });
       }

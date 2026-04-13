@@ -11,7 +11,7 @@ A unified diagram plugin for Obsidian with **MermaidX syntax** - Architecture di
 - 🏗️ **Architecture Diagrams** - Layered system architecture with Mermaid-like syntax
 - 🧠 **Knowledge Graphs** - Interactive force-directed concept maps
 - 📊 **Swimlane Diagrams** - Process flows with lanes and roles
-- 🎨 **Theme System** - 7 built-in themes with toolbar selector
+- 🎨 **Theme System** - 8 built-in themes with toolbar selector
 - 🖌️ **Custom Node Colors** - `@style` directive for per-node color customization
 - 📝 **Unified Syntax** - Single `mermaidX` code block for all diagram types
 - 📱 **Responsive** - Works on desktop and mobile
@@ -58,6 +58,7 @@ All MermaidX diagrams follow this structure:
 title: Diagram Title
 description: Optional description
 height: 600
+theme: ocean
 ---
 diagramType
 diagram source...
@@ -73,8 +74,16 @@ description: |
   - Bullet point 1
   - Bullet point 2
 height: 600
+theme: ocean
 ---
 ```
+
+| Field | Description |
+|-------|-------------|
+| `title` | Diagram title shown in toolbar |
+| `description` | Description for knowledge graph (supports Markdown) |
+| `height` | Canvas height in pixels (knowledge graph) |
+| `theme` | Theme name (see Themes below) |
 
 ### Supported Diagram Types
 
@@ -83,6 +92,21 @@ height: 600
 | `archDiagram` | `arch` | Architecture diagram |
 | `knowledgeGraph` | `knowledge` | Knowledge graph |
 | `swimlane` | - | Swimlane/Process diagram |
+
+### Themes
+
+8 built-in themes, selectable via toolbar dropdown or `theme:` in frontmatter:
+
+| Theme | Description |
+|-------|-------------|
+| ⬜ Default | Light gray-white, standard colors |
+| 🌤️ Warm | Cozy beige/orange tones |
+| 🌙 Dark | Catppuccin Mocha dark mode |
+| 🌊 Ocean | Deep blue & teal |
+| 🌲 Forest | Green & earth tones |
+| 📐 Blueprint | Engineering blueprint (dark background) |
+| 🖌️ Ink | Chinese ink painting (black-white-red seal) |
+| 🤍 Wireframe | Minimal black & white, no fills |
 
 ---
 
@@ -121,7 +145,20 @@ end
 nodeId[Display Text]     # Rectangle
 nodeId(Display Text)    # Rounded rectangle
 nodeId((Display Text))  # Circle
-NodeName                 # Plain name
+NodeName                 # Plain name (supports emoji)
+```
+
+### Columns Constraint
+
+Constrain nodes per row (LR) or per column (TD):
+
+```
+subgraph Services
+  columns 3
+  api[API Service]
+  auth[Auth Service]
+  user[User Service]
+end
 ```
 
 ### Link Styles
@@ -129,7 +166,7 @@ NodeName                 # Plain name
 ```
 A --> B          # Solid arrow
 A ==> B          # Thick arrow
-A -.-> B         # Dashed arrow
+A -.-> B         # Dashed arrow (animated)
 A -->|Label| B   # With label
 ```
 
@@ -195,15 +232,25 @@ links:
 
 ### Triple Syntax (Inline)
 
+Two formats for inline triples:
+
+**Comma-separated:**
 ```
 Subject, predicate, Object
 ```
 
+**Arrow syntax with node shapes:**
+```
+[Source]-->|predicate| target        # Solid arrow
+[Source]-.->|predicate| target       # Animated dashed arrow
+```
+
+Node shapes: `[矩形]` `(椭圆)` `{菱形}` `((六边形))` bare name = circle
+
 Example:
 ```
-Alice, works at, Google
-Bob, manages, Alice
-Google, located in, Mountain View
+[Alice]-->|works at| [Google]
+[Bob]-.->|manages| (Alice)
 ```
 
 ### Relation Styles
@@ -217,8 +264,8 @@ Example:
 @style works at #6366f1 [Employment]
 @style manages #f59e0b [Management]
 
-Alice, works at, Google
-Bob, manages, Alice
+[Alice]-->|works at| [Google]
+[Bob]-.->|manages| (Alice)
 ```
 
 ### Comments
@@ -495,12 +542,17 @@ case 'myDiagram':
 - Architecture diagrams support
 - Knowledge graphs support
 - Swimlane diagrams support
-- Theme system with 7 built-in themes (Default, Warm, Dark, Ocean, Forest, Blueprint, Ink)
+- Theme system with 8 built-in themes (Default, Warm, Dark, Ocean, Forest, Blueprint, Ink, Wireframe)
 - `@style` directive for custom node colors in architecture and swimlane diagrams
 - Two-line swimlane nodes: `[Label|Operator]` — name on top, operator on bottom
 - Phantom placeholder nodes: `[]` / `{}` / `()` / `(())` — occupy layout space without rendering
 - Layer-to-layer connections in architecture diagrams
+- Columns constraint for node layout (`columns N`)
+- Emoji support in architecture diagram plain node names
+- Arrow syntax in knowledge graph triples (`[A]-->|rel| [B]`, `[A]-.->|rel| [B]`)
+- Node shapes in knowledge graph (`[rect]`, `(ellipse)`, `{diamond}`, `((hexagon))`)
 - Toolbar theme selector for all diagram types
+- Frontmatter `theme` field for presetting theme per diagram
 - Unified mermaidX syntax
 
 ---

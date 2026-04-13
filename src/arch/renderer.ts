@@ -144,14 +144,24 @@ function renderLayer(container: HTMLElement, layer: ArchLayer, position: 'left' 
   
   if (hasGroups) {
     const groupsContainer = contentContainer.createDiv({ cls: 'arch-groups' });
-    for (const group of layer.groups!) {
-      renderGroup(groupsContainer, group);
+    for (let i = 0; i < layer.groups!.length; i++) {
+      if (i > 0) {
+        groupsContainer.createDiv({ cls: 'arch-group-divider' });
+      }
+      renderGroup(groupsContainer, layer.groups![i]);
     }
   }
   
   if (hasDirectNodes) {
     const nodesDirectionClass = layer.direction ? `arch-nodes-${layer.direction}` : '';
-    const nodesContainer = contentContainer.createDiv({ cls: `arch-nodes ${nodesDirectionClass}` });
+    const columnsClass = layer.columns ? 'arch-nodes-columns' : '';
+    const nodesContainer = contentContainer.createDiv({
+      cls: `arch-nodes ${nodesDirectionClass} ${columnsClass}`.trim(),
+      attr: layer.columns ? { 'data-columns': String(layer.columns) } : {}
+    });
+    if (layer.columns) {
+      nodesContainer.setCssProps({ '--arch-cols': String(layer.columns), '--arch-gap': '8px', 'flex-wrap': 'wrap' });
+    }
     for (const node of layer.nodes!) {
       renderNode(nodesContainer, node);
     }
@@ -170,7 +180,14 @@ function renderGroup(container: HTMLElement, group: ArchGroup) {
   }
   
   // Always create nodes container
-  const nodesContainer = groupEl.createDiv({ cls: 'arch-nodes' });
+  const columnsClass = group.columns ? 'arch-nodes-columns' : '';
+  const nodesContainer = groupEl.createDiv({
+    cls: `arch-nodes ${columnsClass}`.trim(),
+    attr: group.columns ? { 'data-columns': String(group.columns) } : {}
+  });
+  if (group.columns) {
+    nodesContainer.setCssProps({ '--arch-cols': String(group.columns), '--arch-gap': '8px', 'flex-wrap': 'wrap' });
+  }
   for (const node of group.nodes) {
     renderNode(nodesContainer, node);
   }

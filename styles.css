@@ -81,8 +81,9 @@
 .arch-middle {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px;
   flex: 1;
+  min-width: 0;
 }
 
 /* Layers */
@@ -98,9 +99,17 @@
   position: relative;
 }
 
-/* Layer with title needs minimal top space */
+.arch-layer:has(.arch-layer-title) > .arch-layer-content {
+  margin-top: 4px;
+}
+.arch-layer-middle {
+  width: 100%;
+  min-width: 0;
+}
+
+/* Layer with title needs top space for absolute title */
 .arch-layer:has(.arch-layer-title) {
-  padding-top: 24px;
+  padding-top: 28px;
 }
 
 .arch-layer-left,
@@ -109,29 +118,16 @@
   flex-shrink: 0;
 }
 
-/* Layer layout direction - Mermaid style (LR/TD/RL/BT) */
-.arch-layer-LR {
-  display: flex;
+/* Layer layout direction — only affects .arch-layer-content, NOT layer itself */
+.arch-layer-LR > .arch-layer-content,
+.arch-layer-RL > .arch-layer-content {
   flex-direction: row;
-  gap: 16px;
 }
 
-.arch-layer-TD {
-  display: flex;
+.arch-layer-TD > .arch-layer-content,
+.arch-layer-BT > .arch-layer-content,
+.arch-layer-TB > .arch-layer-content {
   flex-direction: column;
-  gap: 16px;
-}
-
-.arch-layer-RL {
-  display: flex;
-  flex-direction: row-reverse;
-  gap: 16px;
-}
-
-.arch-layer-BT {
-  display: flex;
-  flex-direction: column-reverse;
-  gap: 16px;
 }
 
 .arch-layer-content {
@@ -147,20 +143,51 @@
 /* Groups */
 .arch-groups {
   display: flex;
-  gap: 12px;
+  gap: 0;
   align-items: flex-start;
+  width: 100%;
 }
 
-/* Layer groups inherit direction from layer */
-.arch-layer-LR > .arch-groups,
-.arch-layer-RL > .arch-groups {
+/* Divider between adjacent groups — dashed line */
+.arch-group-divider {
+  flex-shrink: 0;
+}
+
+/* LR direction: vertical divider, groups equal width */
+.arch-layer-LR > .arch-layer-content > .arch-groups,
+.arch-layer-RL > .arch-layer-content > .arch-groups {
   flex-direction: row;
+  flex-wrap: nowrap;
 }
 
-.arch-layer-TD > .arch-groups,
-.arch-layer-BT > .arch-groups {
+.arch-layer-LR > .arch-layer-content > .arch-groups > .arch-group,
+.arch-layer-RL > .arch-layer-content > .arch-groups > .arch-group {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.arch-layer-TD > .arch-layer-content > .arch-groups,
+.arch-layer-BT > .arch-layer-content > .arch-groups {
   flex-direction: column;
 }
+
+.arch-layer-LR > .arch-layer-content > .arch-groups > .arch-group-divider,
+.arch-layer-RL > .arch-layer-content > .arch-groups > .arch-group-divider {
+  width: 1px;
+  border-left: 1px dashed #d0d0d0;
+  margin: 4px 12px;
+  align-self: stretch;
+}
+
+.arch-layer-TD > .arch-layer-content > .arch-groups > .arch-group-divider,
+.arch-layer-BT > .arch-layer-content > .arch-groups > .arch-group-divider {
+  height: 1px;
+  border-top: 1px dashed #d0d0d0;
+  margin: 12px 4px;
+  align-self: stretch;
+}
+
+/* Layer groups inherit direction from layer (already defined above with .arch-layer-content) */
 
 /* Layer title - lightweight, top-left */
 .arch-layer-title {
@@ -175,25 +202,26 @@
 }
 
 .arch-group {
-  border: 1px solid #ccc;
+  border: none;
   border-radius: 6px;
   padding: 12px;
-  background: white;
+  background: transparent;
   position: relative;
 }
 
 /* Group with title needs minimal top space */
 .arch-group:has(.arch-group-title) {
-  padding-top: 20px;
+  padding-top: 24px;
 }
 
-/* Group layout direction - Mermaid style (LR/TD/RL/BT) */
+/* Group layout direction - Mermaid style (LR/TD/RL/BT/TB) */
 .arch-group-LR {
   display: flex;
   flex-direction: row;
 }
 
-.arch-group-TD {
+.arch-group-TD,
+.arch-group-TB {
   display: flex;
   flex-direction: column;
 }
@@ -208,16 +236,21 @@
   flex-direction: column-reverse;
 }
 
-/* Group title - lightweight, top-left */
+/* Group title - centered at top */
 .arch-group-title {
   position: absolute;
   top: 4px;
-  left: 6px;
-  margin: 0;
+  left: 0;
+  right: 0;
+  margin: 0 !important;
   padding: 2px 4px;
-  font-size: 10px;
-  font-weight: 400;
-  color: #888;
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  color: #888 !important;
+  text-align: center;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  line-height: normal !important;
 }
 
 /* Nodes */
@@ -225,6 +258,21 @@
   display: flex;
   gap: 8px;
   align-items: flex-start;
+  width: 100%;
+}
+
+/* Columns constraint: enable wrapping and limit items per row via flex-basis */
+.arch-nodes-columns {
+  flex-wrap: wrap;
+  width: 100%;
+  min-width: 0;
+}
+
+.arch-nodes-columns > .arch-node {
+  flex: 1 1 calc((100% - var(--arch-cols, 1) * var(--arch-gap, 8px) + var(--arch-gap, 8px)) / var(--arch-cols, 1));
+  max-width: calc((100% - var(--arch-cols, 1) * var(--arch-gap, 8px) + var(--arch-gap, 8px)) / var(--arch-cols, 1)) !important;
+  min-width: 0 !important;
+  box-sizing: border-box;
 }
 
 /* Layer nodes inherit direction from layer (when layer has direct nodes, no groups) */
@@ -235,7 +283,8 @@
 }
 
 .arch-nodes-TD,
-.arch-nodes-BT {
+.arch-nodes-BT,
+.arch-nodes-TB {
   flex-direction: column;
   flex-wrap: nowrap;
 }
@@ -248,9 +297,42 @@
 }
 
 .arch-group-TD > .arch-nodes,
-.arch-group-BT > .arch-nodes {
+.arch-group-BT > .arch-nodes,
+.arch-group-TB > .arch-nodes {
   flex-direction: column;
   flex-wrap: nowrap;
+}
+
+/* Non-columns nodes in LR/TD/TB groups */
+.arch-group-TD > .arch-nodes:not(.arch-nodes-columns) > .arch-node,
+.arch-group-BT > .arch-nodes:not(.arch-nodes-columns) > .arch-node,
+.arch-group-TB > .arch-nodes:not(.arch-nodes-columns) > .arch-node {
+  width: 100%;
+  min-width: 0 !important;
+  box-sizing: border-box;
+}
+
+.arch-group-LR > .arch-nodes:not(.arch-nodes-columns) > .arch-node,
+.arch-group-RL > .arch-nodes:not(.arch-nodes-columns) > .arch-node,
+.arch-nodes-LR:not(.arch-nodes-columns) > .arch-node,
+.arch-nodes-RL:not(.arch-nodes-columns) > .arch-node {
+  flex: 1 1 auto;
+  min-width: 0 !important;
+}
+
+/* Group nodes container: stretch to full group width in TD/TB direction */
+.arch-group-TD > .arch-nodes,
+.arch-group-BT > .arch-nodes,
+.arch-group-TB > .arch-nodes {
+  width: 100%;
+}
+
+/* Columns constraint overrides nowrap from direction classes */
+.arch-nodes-columns.arch-nodes-LR,
+.arch-nodes-columns.arch-nodes-RL,
+.arch-group-LR > .arch-nodes.arch-nodes-columns,
+.arch-group-RL > .arch-nodes.arch-nodes-columns {
+  flex-wrap: wrap;
 }
 
 .arch-node {

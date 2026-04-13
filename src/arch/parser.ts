@@ -84,10 +84,25 @@ export function parseArchDiagram(frontmatter: DiagramFrontmatter, source: string
       continue;
     }
 
+    // columns N — constrain nodes per row (LR) or per column (TD)
+    const columnsMatch = line.match(/^columns\s+(\d+)$/);
+    if (columnsMatch) {
+      const cols = parseInt(columnsMatch[1], 10);
+      if (cols > 0) {
+        const topFrame = stack[stack.length - 1];
+        if (topFrame?.group) {
+          topFrame.group.columns = cols;
+        } else if (topFrame?.layer) {
+          topFrame.layer.columns = cols;
+        }
+      }
+      continue;
+    }
+
     // left: id[label] or left: label
     if (line.startsWith('left:')) {
       const raw = line.substring(5).trim();
-      const bracketMatch = raw.match(/^([\w-]+)\[(.+)\]$/);
+      const bracketMatch = raw.match(/^([\w\u4e00-\u9fa5-]+)\[(.+)\]$/);
       const id = bracketMatch ? bracketMatch[1] : raw;
       const label = bracketMatch ? bracketMatch[2] : raw;
       const layer: ArchLayer = {
@@ -106,7 +121,7 @@ export function parseArchDiagram(frontmatter: DiagramFrontmatter, source: string
     // right: id[label] or right: label
     if (line.startsWith('right:')) {
       const raw = line.substring(6).trim();
-      const bracketMatch = raw.match(/^([\w-]+)\[(.+)\]$/);
+      const bracketMatch = raw.match(/^([\w\u4e00-\u9fa5-]+)\[(.+)\]$/);
       const id = bracketMatch ? bracketMatch[1] : raw;
       const label = bracketMatch ? bracketMatch[2] : raw;
       const rightColorIndex = data.middleLayers.length + (data.leftLayer ? 1 : 0);
@@ -127,7 +142,7 @@ export function parseArchDiagram(frontmatter: DiagramFrontmatter, source: string
     if (line.startsWith('subgraph ') || line === 'subgraph') {
       const raw = line.startsWith('subgraph ') ? line.substring(9).trim() : '';
       // Parse id[label] or just label
-      const bracketMatch = raw.match(/^([\w-]+)\[(.+)\]$/);
+      const bracketMatch = raw.match(/^([\w\u4e00-\u9fa5-]+)\[(.+)\]$/);
       const id = bracketMatch ? bracketMatch[1] : raw;
       const label = bracketMatch ? bracketMatch[2] : raw;
       const parentLayer = currentLayer();
@@ -185,7 +200,7 @@ export function parseArchDiagram(frontmatter: DiagramFrontmatter, source: string
     const nodeType = layer?.nodeType || 'service';
 
     // id[text] - rectangle
-    const nodeIdTextMatch = line.match(/^([\w-]+)\[(.+)\]$/);
+    const nodeIdTextMatch = line.match(/^([\w\u4e00-\u9fa5-]+)\[(.+)\]$/);
     if (nodeIdTextMatch) {
       const node: ArchNode = {
         id: nodeIdTextMatch[1],
@@ -235,10 +250,10 @@ export function parseArchDiagram(frontmatter: DiagramFrontmatter, source: string
       continue;
     }
 
-    // Plain name
-    const plainNodeMatch = line.match(/^[\w-]+$/);
+    // Plain name (including Chinese characters, common punctuation like /, and emoji)
+    const plainNodeMatch = line.match(/^[\w\u4e00-\u9fa5\-/\p{Emoji_Presentation}\p{Extended_Pictographic}\uFE0F\u200D]+$/u);
     if (plainNodeMatch) {
-      const nodeId = line.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+      const nodeId = line.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\u4e00-\u9fa5\-/\p{Emoji_Presentation}\p{Extended_Pictographic}\uFE0F\u200D]/gu, '');
       const node: ArchNode = {
         id: nodeId,
         name: line,
