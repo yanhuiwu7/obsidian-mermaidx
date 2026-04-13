@@ -3386,7 +3386,7 @@ function getThemeLabel(name) {
 }
 
 // src/arch/renderer.ts
-function renderArchDiagram(container, data, themeName, _onThemeChange) {
+function renderArchDiagram(container, data, themeName, onThemeChange) {
   const archContainer = container;
   container.addClass("arch-wrap");
   archContainer.__archData = data;
@@ -3411,6 +3411,7 @@ function renderArchDiagram(container, data, themeName, _onThemeChange) {
     }
     (_c = archContainer.__archChild) == null ? void 0 : _c.resumeObserver();
     (_d = archContainer.__archChild) == null ? void 0 : _d.forceRedraw();
+    onThemeChange == null ? void 0 : onThemeChange(themeSelect.value);
   });
   const btnToggleLinks = btnRow.createEl("button", {
     text: "Hide links",

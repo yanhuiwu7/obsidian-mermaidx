@@ -14,7 +14,7 @@ export function renderArchDiagram(
   container: HTMLElement,
   data: ArchDiagramData,
   themeName?: string | null,
-  _onThemeChange?: (themeName: string) => void
+  onThemeChange?: (themeName: string) => void
 ): void {
   const archContainer = container as ArchContainer;
   
@@ -55,9 +55,7 @@ export function renderArchDiagram(
     // Resume observer and force a single redraw with the new theme
     archContainer.__archChild?.resumeObserver();
     archContainer.__archChild?.forceRedraw();
-    // Note: intentionally NOT calling onThemeChange here to avoid vault.modify
-    // which triggers Obsidian to re-render the entire code block, causing a flash.
-    // The theme is applied live in-memory. Persistence is handled via frontmatter only.
+    onThemeChange?.(themeSelect.value);
   });
 
   const btnToggleLinks = btnRow.createEl('button', {
